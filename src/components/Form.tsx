@@ -29,12 +29,15 @@ const useStyles = makeStyles(() => createStyles({
 type Values = {
     name : string,
     email : string,
-    age : string,
+    rating : string,
 }
 
-const ages = [
-    {value : "20-40",label :"From 20 to 40"},
-    {value : "40-50",label :"From 40 to 50"},
+const ratings = [
+    {value : "1",label :"1"},
+    {value : "2",label :"2"},
+    {value : "3",label :"3"},
+    {value : "4",label :"4"},
+    {value : "5",label :"5"},
 ]
 
 const Form = () => {
@@ -43,7 +46,7 @@ const Form = () => {
     const [values,setValues] = useState<Values>({
         name : "",
         email : "",
-        age : "",
+        rating : "",
     });
 
     const handleChange = (event : React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +64,7 @@ const Form = () => {
             <form onSubmit={(e) => handleSubmit(e)} className={classes.form}>
                 <CustomTextField changeHandler={handleChange} label={"Name"} name={"name"}/>
                 <CustomTextField changeHandler={handleChange} label={"Email"} name={"email"}/>
-                <CustomDropDown label={"Age"} name={"age"} changeHandler={handleChange} values={ages} currentValue={values.age}/>
+                <CustomDropDown label={"Rating"} name={"rating"} changeHandler={handleChange} values={ratings} currentValue={values.rating}/>
                 <Button type={"submit"} variant={"contained"} className={classes.button}>Submit</Button>
             </form>
         </Paper>
