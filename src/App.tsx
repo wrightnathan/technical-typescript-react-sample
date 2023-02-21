@@ -1,12 +1,21 @@
-import React from 'react';
+import React from "react"
 
-import './App.css';
 import Form from "./components/Form"
 
 function App() {
-    return (
-        <div><Form/></div>
-    );
+  return (
+    <div
+      style={{
+        backgroundColor: "#ccc",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Form />
+    </div>
+  )
 }
 
-export default App;
+export default App

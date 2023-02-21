@@ -1,74 +1,112 @@
-import React, {useState} from "react";
-import {createStyles, makeStyles, Typography,Paper,Button} from "@material-ui/core";
+import React, { useState } from "react"
+import styled from "@emotion/styled"
 
-import CustomTextField from "./CustomTextField";
-import CustomDropDown from "./CustomDropDown";
-
-const useStyles = makeStyles(() => createStyles({
-    form : {
-        display : "flex",
-        flexDirection : "column",
-    },
-    container : {
-        backgroundColor : "#ffffff",
-        position : "absolute",
-        top : "50%",
-        left : "50%",
-        transform : "translate(-50%,-50%)",
-        padding : 30,
-        textAlign : "center"
-    },
-    title : {
-        margin:"0px 0 20px 0"
-    },
-    button : {
-        margin:"20px 0"
-    }
-}))
+import RatingDropDown from "./RatingDropDown"
+import FormInput from "./FormInputs"
 
 type Values = {
-    name : string,
-    email : string,
-    rating : string,
+  name: string
+  email: string
+  rating: string
 }
 
 const ratings = [
-    {value : "1",label :"1"},
-    {value : "2",label :"2"},
-    {value : "3",label :"3"},
-    {value : "4",label :"4"},
-    {value : "5",label :"5"},
+  { value: "1", label: "1" },
+  { value: "2", label: "2" },
+  { value: "3", label: "3" },
+  { value: "4", label: "4" },
+  { value: "5", label: "5" },
 ]
 
 const Form = () => {
+  const [values, setValues] = useState<Values>({
+    name: "",
+    email: "",
+    rating: "",
+  })
 
-    const classes = useStyles();
-    const [values,setValues] = useState<Values>({
-        name : "",
-        email : "",
-        rating : "",
-    });
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setValues({ ...values, [event.target.name]: event.target.value })
+  }
 
-    const handleChange = (event : React.ChangeEvent<HTMLInputElement>) => {
-        setValues({...values,[event.target.name] : event.target.value});
-    }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    console.log(values)
+  }
 
-    const handleSubmit = (event : React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        console.log(values)
-    }
+  return (
+    <FormContainer>
+      <img src="./logo_glyph.png" alt="logo" />
 
-    return (
-        <Paper className={classes.container}>
-            <Typography variant={"h4"} className={classes.title}>Form</Typography>
-            <form onSubmit={(e) => handleSubmit(e)} className={classes.form}>
-                <CustomTextField changeHandler={handleChange} label={"Name"} name={"name"}/>
-                <CustomTextField changeHandler={handleChange} label={"Email"} name={"email"}/>
-                <CustomDropDown label={"Rating"} name={"rating"} changeHandler={handleChange} values={ratings} currentValue={values.rating}/>
-                <Button type={"submit"} variant={"contained"} className={classes.button}>Submit</Button>
-            </form>
-        </Paper>
-    );
+      <Header>We'd love to hear your feedback!</Header>
+      <p>On a scale of 1-5, how likely are you to recommend Streem?</p>
+
+      <form
+        onSubmit={(e) => handleSubmit(e)}
+        style={{ display: "flex", flexDirection: "column", width: "400px" }}
+      >
+        <FormInput changeHandler={handleChange} label={"Name"} name={"name"} />
+        <FormInput
+          changeHandler={handleChange}
+          label={"Email"}
+          name={"email"}
+        />
+
+        <RatingDropDown
+          label={"Rating"}
+          name={"rating"}
+          changeHandler={handleChange}
+          values={ratings}
+          currentValue={values.rating}
+        />
+
+        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <Button
+            onClick={() => setValues({ name: "", email: "", rating: "" })}
+          >
+            Skip
+          </Button>
+          <Button type="submit" primary>
+            Submit
+          </Button>
+        </div>
+      </form>
+    </FormContainer>
+  )
 }
 
-export default Form;
+export default Form
+
+const FormContainer = styled("div")({
+  padding: "40px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  backgroundColor: "#fff",
+  width: "40vw",
+  height: "50vh",
+  borderRadius: "8px",
+  boxShadow: "0 0 8px 0 rgba(0,0,0,0.2)",
+  justifyContent: "center",
+})
+
+const Header = styled("h2")({
+  margin: "20px 0 20px 0",
+  color: "#082D61",
+})
+
+const Button = styled("button")(({ primary }: { primary?: boolean }) => ({
+  padding: "12px",
+  borderRadius: "20px",
+  border: primary ? "none" : "solid 1px #666",
+  backgroundColor: primary ? "#0077FF" : "#fff",
+  color: primary ? "#fff" : "#666",
+  fontSize: "16px",
+  width: "140px",
+  fontWeight: "600",
+  alignSelf: "flex-end",
+  marginTop: "24px",
+  height: "40px",
+}))
