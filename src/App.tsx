@@ -1,8 +1,6 @@
-import React from "react"
+import FeedbackForm from "./components/FeedbackForm"
 
-import Form from "./components/Form"
-
-function App() {
+const App = () => {
   return (
     <div
       style={{
@@ -13,7 +11,7 @@ function App() {
         alignItems: "center",
       }}
     >
-      <Form />
+      <FeedbackForm />
     </div>
   )
 }
