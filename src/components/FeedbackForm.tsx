@@ -1,85 +1,65 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, MouseEvent, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
-
-const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-  console.log(e);
-  console.log(e.currentTarget.elements);
-};
-
-const Input = styled("input")({
-  width: "100%",
-  padding: "8px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-});
-
-const Select = styled("select")({
-  width: "100%",
-  padding: "8px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-  marginTop: "8px",
-  //** for the dropdown indicator:
-  //    https://stackoverflow.com/a/70655732
-  appearance: "none",
-  backgroundImage:
-    "url(\"data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e\")",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "right 0.5rem center",
-  backgroundSize: "1em",
-});
-
-const Button = styled("button")({
-  width: "100%",
-  padding: "8px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-  marginTop: "8px",
-});
+import RatingRadioList from "./RatingRadioList";
+import Buttons from "./Buttons";
+import Labels from "./Labels";
 
 const Form = styled("form")({
-  width: "400px",
+  width: "100%",
   textAlign: "center",
-  marginTop: "40px",
-  fontSize: "24px",
+});
+
+const HeaderText = styled.h1({
+  fontSize: "2.8rem",
   fontWeight: 600,
+  marginBottom: ".8rem",
+});
+
+const DescriptionText = styled.p({
+  fontSize: "1.8rem",
+  fontWeight: 400,
 });
 
 const FeedbackForm = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [rating, setRating] = useState("");
+  const [rating, setRating] = useState<string>("");
+  const formContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (formContainerRef.current) {
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          setRating("");
+        }
+      };
+      formContainerRef.current.addEventListener("keydown", handleEscape);
+      return formContainerRef.current.removeEventListener(
+        "keydown",
+        () => handleEscape
+      );
+    }
+  }, [formContainerRef]);
+
+  const buttonEnabled = rating.length > 0;
+  // useCallback could be used here to memoize these functions
+  const handleCancel = (event: MouseEvent<HTMLButtonElement>) => {
+    // not sure what to do, so just stop propagation and clear rating
+    event.stopPropagation();
+    setRating("");
+  };
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.stopPropagation();
+    console.log(`rating was ${rating}`);
+  };
 
   return (
-    <FormContainer>
-      <img src="./logo_glyph.png" alt="logo" />
-
-      <Form
-        onSubmit={onSubmit}
-      >
-        <Input
-          placeholder="Name"
-          value={name}
-          onInput={(e) => setName(e.currentTarget.value)}
-        />
-        <Input
-          placeholder="Email"
-          value={email}
-          onInput={(e) => setEmail(e.currentTarget.value)}
-        />
-        <Select
-          onChange={(e) => setRating(e.currentTarget.value)}
-          value={rating}
-        >
-          <option value="">Select rating</option>
-          <option value="1">1 star</option>
-          <option value="2">2 stars</option>
-        </Select>
-        <Button
-          type="submit"
-        >
-          Submit
-        </Button>
+    <FormContainer ref={formContainerRef}>
+      <HeaderText>We love to hear your feedback!</HeaderText>
+      <DescriptionText>
+        On a scale of 1-5, how likely are you to recommend this service?
+      </DescriptionText>
+      <Form onSubmit={handleSubmit}>
+        <RatingRadioList selectedItem={rating} onItemSelected={setRating} />
+        <Labels />
+        <Buttons primaryEnabled={buttonEnabled} handleCancel={handleCancel} />
       </Form>
     </FormContainer>
   );
@@ -88,13 +68,14 @@ const FeedbackForm = () => {
 export default FeedbackForm;
 
 const FormContainer = styled("div")({
-  padding: "40px",
+  padding: "4rem",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   backgroundColor: "#fff",
   // height: "50vh", // removed to allow for vertical expansion
-  borderRadius: "8px",
+  borderRadius: ".8rem",
   boxShadow: "0 0 8px 0 rgba(0,0,0,0.2)",
   justifyContent: "flex-start",
+  width: "50rem",
 });
